@@ -1,4 +1,28 @@
 #!/usr/bin/env python3
+"""
+covariance_logger.py
+
+Subscribes to the fused EKF output (/odometry/filtered, published by
+robot_localization's ekf_node) and:
+
+  * republishes the running planar (x, y, yaw) pose covariance sub-block as
+    its own std_msgs/Float64MultiArray topic, for easy plotting/inspection
+    without needing to pick apart the full 6x6 nav_msgs/Odometry covariance,
+  * logs trace/determinant summary statistics (simple scalar proxies for
+    "how uncertain is the filter right now") to the console (throttled),
+  * optionally appends a CSV row per message for offline analysis of how
+    covariance grows/shrinks as the robot passes through the degenerate
+    corridor and the dusty-floor slip patch.
+
+Published:
+    /ekf/pose_covariance_planar   (std_msgs/Float64MultiArray)
+        Row-major flattened 3x3 covariance over (x, y, yaw), extracted from
+        the full 6x6 nav_msgs/Odometry.pose.covariance.
+
+Subscribed:
+    /odometry/filtered   (nav_msgs/Odometry)
+"""
+
 import csv
 import os
 import time
