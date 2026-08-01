@@ -1,0 +1,132 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="corridor_world">
+
+    <!-- ===================== Required gz-sim systems ===================== -->
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <!-- UserCommands is what exposes /world/<name>/set_pose used by wall_shifter.py -->
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"/>
+
+    <physics name="1ms" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <gravity>0 0 -9.8</gravity>
+
+    <scene>
+      <ambient>0.6 0.6 0.6 1</ambient>
+      <background>0.3 0.3 0.35 1</background>
+      <shadows>true</shadows>
+      <grid>false</grid>
+    </scene>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.4 0.2 -0.9</direction>
+    </light>
+
+    <!-- ===================== Corridor geometry =====================
+         20 m long, straight, flat/featureless concrete walls -> deliberate
+         structural (axial) degeneracy: scan-matching along the long axis
+         is under-constrained since walls are planar and textureless. -->
+
+    <model name="corridor_floor">
+      <static>true</static>
+      <pose>10 0 -0.05 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>20 3 0.1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>20 3 0.1</size></box></geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="corridor_wall_left">
+      <static>true</static>
+      <pose>10 1.5 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>20 0.1 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>20 0.1 3</size></box></geometry>
+          <material>
+            <!-- flat, featureless concrete grey - no texture variation on purpose -->
+            <ambient>0.62 0.62 0.60 1</ambient>
+            <diffuse>0.62 0.62 0.60 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="corridor_wall_right">
+      <static>true</static>
+      <pose>10 -1.5 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>20 0.1 3</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>20 0.1 3</size></box></geometry>
+          <material>
+            <ambient>0.62 0.62 0.60 1</ambient>
+            <diffuse>0.62 0.62 0.60 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===================== Shifting wall panel =====================
+         A large panel at the corridor midpoint (x = 10, i.e. halfway down
+         the 20 m hall). Its pose is toggled sideways (along Y) by 1.5 m
+         every 15 s by the ddr_pkg/wall_shifter node via the
+         /world/corridor_world/set_pose service (non-static so it can be
+         teleported at runtime; kinematic so physics doesn't fight the sets). -->
+    <model name="shifting_wall">
+      <static>false</static>
+      <self_collide>false</self_collide>
+      <pose>10 0.75 1.5 0 0 0</pose>
+      <link name="panel_link">
+        <kinematic>true</kinematic>
+        <inertial>
+          <mass>150.0</mass>
+          <inertia>
+            <ixx>50.0</ixx><iyy>50.0</iyy><izz>50.0</izz>
+            <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+          </inertia>
+        </inertial>
+        <collision name="collision">
+          <geometry><box><size>0.15 1.5 3.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.15 1.5 3.0</size></box></geometry>
+          <material>
+            <ambient>0.75 0.2 0.15 1</ambient>
+            <diffuse>0.8 0.25 0.2 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
