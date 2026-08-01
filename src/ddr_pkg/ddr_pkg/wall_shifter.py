@@ -1,22 +1,4 @@
 #!/usr/bin/env python3
-"""
-wall_shifter.py
-
-Periodically teleports the 'shifting_wall' model in the corridor.world
-Gazebo (gz-sim) world sideways by a fixed amount (default 1.5 m), toggling
-between two lateral offsets, once every `period` seconds (default 15 s).
-
-Implementation notes
----------------------
-gz-sim exposes a gz-transport service `/world/<world>/set_pose`
-(request type `gz.msgs.Pose`, response type `gz.msgs.Boolean`) via the
-UserCommands system plugin, which is enabled in worlds/corridor.world.
-Rather than pulling in the gz-transport / gz-msgs Python bindings as a
-hard dependency, this node shells out to the `gz service` CLI tool that
-ships with every gz-sim / ros_gz install -- this keeps the package's
-runtime dependency footprint to just rclpy.
-"""
-
 import subprocess
 
 import rclpy
