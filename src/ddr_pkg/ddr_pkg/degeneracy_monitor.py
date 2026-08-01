@@ -1,44 +1,4 @@
 #!/usr/bin/env python3
-"""
-degeneracy_monitor.py
-
-Standalone scan-matching analytics node. Performs frame-to-frame point-to-plane
-alignment of the 3D LiDAR point cloud (projected to the horizontal plane, since
-the corridor's structural degeneracy is a planar/axial phenomenon: two long,
-flat, parallel walls constrain lateral (Y) translation and yaw well, but leave
-translation along the corridor's long axis (X) almost entirely unconstrained).
-
-For a point-to-plane ICP formulation, the Gauss-Newton Hessian
-
-    H = sum_i J_i^T J_i        (Fisher Information Matrix approximation)
-
-is exactly the *Information Matrix* of the scan-matching problem (inverse of
-the Cramer-Rao lower bound on pose covariance, under Gaussian residual noise).
-Each row of J_i is the point-to-plane Jacobian for correspondence i:
-
-    J_i = [ n_x, n_y, (p_x * n_y - p_y * n_x) ]     (SE(2): x, y, yaw)
-
-where n = (n_x, n_y) is the local surface normal at the matched target point,
-and p = (p_x, p_y) is the source point in the sensor frame.
-
-Eigen-decomposing H reveals the degenerate directions of the optimization:
-a near-zero eigenvalue means the corresponding eigenvector direction in
-(x, y, yaw) space is *not* observable from the current scan geometry -- in a
-straight, feature-less corridor this shows up as a small eigenvalue whose
-eigenvector aligns with the corridor's long (X) axis.
-
-Published topics:
-    /scan_matching/information_matrix   (std_msgs/Float64MultiArray)
-        Row-major flattened 3x3 information matrix H (x, y, yaw).
-
-    /scan_matching/degeneracy           (diagnostic_msgs/DiagnosticArray)
-        Eigenvalues, condition number, most-degenerate-axis direction, and an
-        is_degenerate flag (thresholded on the minimum eigenvalue).
-
-Subscribed:
-    /scan/points   (sensor_msgs/PointCloud2)   16-channel 3D LiDAR output
-"""
-
 import math
 
 import numpy as np
