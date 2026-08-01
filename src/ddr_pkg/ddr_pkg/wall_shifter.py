@@ -13,16 +13,11 @@ class WallShifter(Node):
         self.declare_parameter('world_name', 'corridor_world')
         self.declare_parameter('model_name', 'shifting_wall')
         self.declare_parameter('period_sec', 15.0)
-        self.declare_parameter('shift_amount', 1.5)   # meters, sideways (Y)
-        self.declare_parameter('x', 10.0)              # halfway down a 20 m hall
+        self.declare_parameter('shift_amount', 1.5)   
+        self.declare_parameter('x', 10.0)              
         self.declare_parameter('z', 1.5)
         self.declare_parameter('start_y', 0.75)
         self.declare_parameter('service_timeout_ms', 2000)
-        # NOTE: 'use_sim_time' is declared automatically by rclpy.Node itself
-        # (it's a standard ROS 2 parameter every node gets); declaring it again
-        # here raises ParameterAlreadyDeclaredException, so it's intentionally
-        # not redeclared. It's still set fine via the launch file's parameters=[...].
-
         self.world_name = self.get_parameter('world_name').value
         self.model_name = self.get_parameter('model_name').value
         self.period_sec = float(self.get_parameter('period_sec').value)
