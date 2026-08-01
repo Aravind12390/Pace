@@ -1,18 +1,4 @@
 #!/usr/bin/env python3
-"""
-trajectory_logger.py
-
-Logs three parallel trajectories to CSV for the "Ground Truth X-Y Trajectory
-vs. Slipping Unfused Odometry vs. Fused State Estimate" summary plot
-(rendered offline by `plot_trajectories.py`):
-
-    /odom              (ground truth, from gz-sim DiffDrive)   -> gt_trajectory.csv
-    /odom_noisy        (slipping, unfused, dead-reckoned)      -> unfused_trajectory.csv
-    /odometry/filtered (EKF fused estimate)                     -> fused_trajectory.csv
-
-Each row: timestamp, x, y, yaw.
-"""
-
 import csv
 import math
 import os
