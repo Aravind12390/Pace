@@ -25,18 +25,6 @@ def _wrap(a: float) -> float:
 
 
 class CorridorDriver(Node):
-
-    # ---- route plan, all distances in metres along the corridor (X) --------
-    # phase, x_end, description
-    #   weave_a : serpentine before the panel -> builds yaw history, separates
-    #             the trajectories well before the slip patch even starts
-    #   merge   : converge onto the free lane ahead of the panel
-    #   gap     : straight, slow, through the panel gap at x=10
-    #   weave_b : serpentine THROUGH the slip patch [10,15] -> this is the
-    #             segment that makes the unfused/fused divergence obvious
-    #   dwell   : slow crawl in featureless corridor -> lowest lambda_min
-    #   run_out : clear the slip patch so the accumulated error is visible
-
     def __init__(self, args):
         super().__init__('corridor_driver')
 
