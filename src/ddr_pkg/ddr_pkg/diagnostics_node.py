@@ -1,38 +1,4 @@
 #!/usr/bin/env python3
-"""
-diagnostics_node.py
-
-Consumes both halves of the uncertainty picture and turns them into a single,
-gradeable diagnostic stream:
-
-  * the scan-matching Fisher information matrix's eigen-decomposition, from
-    /scan_matching/degeneracy (published by degeneracy_monitor.py) -- this is
-    the direct measure of "LiDAR alignment uncertainty along an axis": the
-    inverse of the smallest eigenvalue is (proportional to) the variance of
-    the least-observable direction in the scan-matching optimization.
-  * the fused EKF state covariance, from /odometry/filtered.
-
-It detects when LiDAR alignment uncertainty along the corridor's long axis
-spikes -- either because it has crossed a hard floor (sustained degeneracy)
-or because it has dropped sharply relative to its own recent history (a
-spike) -- and logs a clearly-taggable warning:
-
-    LOCALIZATION_DEGENERACY_WARNING: ...
-
-Every update is also appended, timestamped, to an output log
-(`diagnostics_log.csv`) containing the full running (x, y, yaw) state
-covariance matrix and whether/why a degeneracy warning fired on that sample.
-Warnings are additionally mirrored to a plain-text sidecar log for quick
-grepping.
-
-Published:
-    /diagnostics/localization_degeneracy   (diagnostic_msgs/DiagnosticArray)
-
-Subscribed:
-    /scan_matching/degeneracy   (diagnostic_msgs/DiagnosticArray)
-    /odometry/filtered          (nav_msgs/Odometry)
-"""
-
 import csv
 import os
 import time
